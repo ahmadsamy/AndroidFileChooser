@@ -1,4 +1,4 @@
-package ahmad.egypt.myfilechooser;
+package ahmad.egypt.myfilechooser.model;
 
 public class FileItem implements Comparable<FileItem>{
 	private String name;

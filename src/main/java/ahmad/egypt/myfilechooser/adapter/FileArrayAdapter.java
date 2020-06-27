@@ -1,4 +1,4 @@
-package ahmad.egypt.myfilechooser;
+package ahmad.egypt.myfilechooser.adapter;
 
 import java.util.List; 
  
@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView; 
 import android.widget.TextView;
+
+import ahmad.egypt.myfilechooser.R;
+import ahmad.egypt.myfilechooser.model.FileItem;
 
 
 public class FileArrayAdapter extends ArrayAdapter<FileItem>{

@@ -9,6 +9,8 @@ import java.util.List;
 import java.text.DateFormat;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.content.Intent;
@@ -23,6 +25,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import ahmad.egypt.myfilechooser.adapter.FileArrayAdapter;
+import ahmad.egypt.myfilechooser.model.FileInfo;
+import ahmad.egypt.myfilechooser.model.FileItem;
+
 public class FileChooserActivity extends AppCompatListActivity {
 
     private File currentDir;
@@ -33,7 +39,7 @@ public class FileChooserActivity extends AppCompatListActivity {
     private static String DIR_PATH="DIR_PATH";
     private static String FILE_FULL_PATH="FILE_FULL_PATH";
     private static String FILE_NAME="FILE_NAME";
-
+    private static String FILE_INFO="FILE_INFO";
 
 
     @Override
@@ -137,18 +143,20 @@ public class FileChooserActivity extends AppCompatListActivity {
             onFileClick(o);
         }
     }
+
     private void onFileClick(FileItem o)
     {
-        //Toast.makeText(this, "Folder Clicked: "+ currentDir, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent();
-        intent.putExtra(DIR_PATH,currentDir.toString());
+        /*intent.putExtra(DIR_PATH,currentDir.toString());
         intent.putExtra(FILE_FULL_PATH,o.getPath());
-        intent.putExtra(FILE_NAME,o.getName());
+        intent.putExtra(FILE_NAME,o.getName());*/
+        intent.putExtra(FILE_INFO,new FileInfo(o.getName(),o.getPath(),currentDir.toString()));
         setResult(RESULT_OK, intent);
         finish();
     }
 
-    public static String getDirPath(Intent data){
+
+    /*public static String getDirPath(Intent data){
        return getData(data,DIR_PATH);
     }
     public static String getFileFullPath(Intent data){
@@ -156,7 +164,17 @@ public class FileChooserActivity extends AppCompatListActivity {
     }
     public static String getFileName(Intent data){
         return getData(data,FILE_NAME);
+    }*/
+
+    public static FileInfo getFileInfo(Intent data){
+        if(data!=null){
+            try {
+                return (FileInfo) data.getSerializableExtra(FILE_INFO);
+            }catch (Exception e){return null;}
+        }
+        return null;
     }
+
 
     private static String getData(Intent intent,String key){
         if(intent!=null){
@@ -179,5 +197,6 @@ public class FileChooserActivity extends AppCompatListActivity {
         df.setRoundingMode(RoundingMode.UP);
         return df.format(f);
     }
+
 }
 
