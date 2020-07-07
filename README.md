@@ -22,7 +22,7 @@ Then get your data from onActivityResult
             } else null
             var fileName=fileInfo?.name
             var fileFullPath=fileInfo?.fullPath
-            var containigDirecory=fileInfo?.dirPath
+            var containingDirectory=fileInfo?.dirPath
         }
     }
 ```
