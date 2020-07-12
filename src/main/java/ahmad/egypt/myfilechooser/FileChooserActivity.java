@@ -9,14 +9,9 @@ import java.util.List;
 import java.text.DateFormat;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.content.Intent;
-import android.view.View;
-import android.widget.ListView;
-
 import java.text.*;
 import java.math.*;
 import android.os.*;
@@ -25,20 +20,17 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import ahmad.egypt.myfilechooser.adapter.FileArrayAdapter;
+import ahmad.egypt.myfilechooser.adapter.FileRecViewAdapter;
 import ahmad.egypt.myfilechooser.model.FileInfo;
 import ahmad.egypt.myfilechooser.model.FileItem;
 
-public class FileChooserActivity extends AppCompatListActivity {
+public class FileChooserActivity extends AppCompatRecViewActivity implements FileRecViewAdapter.FileItemClickCallBack{
 
     private File currentDir;
-    private FileArrayAdapter adapter;
+    private FileRecViewAdapter adapter;
     private String sdCardDir;
     private int REQUEST_CODE=0x000001;
 
-    private static String DIR_PATH="DIR_PATH";
-    private static String FILE_FULL_PATH="FILE_FULL_PATH";
-    private static String FILE_NAME="FILE_NAME";
     private static String FILE_INFO="FILE_INFO";
 
 
@@ -83,88 +75,69 @@ public class FileChooserActivity extends AppCompatListActivity {
         finish();
     }
 
-    private void fill(File f)
+    private void fill(File parentDir)
     {
-        File[]dirs = f.listFiles();
-        this.setTitle("Current Dir: "+f.getName());
-        List<FileItem>dir = new ArrayList<FileItem>();
-        List<FileItem>fls = new ArrayList<FileItem>();
+        File[]allFiles = parentDir.listFiles();
+        this.setTitle("Current Dir: "+parentDir.getName());
+        List<FileItem>directories = new ArrayList<FileItem>();
+        List<FileItem>files = new ArrayList<FileItem>();
         try{
-            for(File ff: dirs)
+            for(File file: allFiles)
             {
-                Date lastModDate = new Date(ff.lastModified());
+                Date lastModDate = new Date(file.lastModified());
                 DateFormat formatter = DateFormat.getDateTimeInstance();
                 String date_modify = formatter.format(lastModDate);
-                if(ff.isDirectory()){
-
-                    File[] fbuf = ff.listFiles();
-                    int buf = 0;
-                    if(fbuf != null){
-                        buf = fbuf.length;
+                if(file.isDirectory()){
+                    File[] subFiles = file.listFiles();
+                    int subFilesCount = 0;
+                    if(subFiles != null){
+                        subFilesCount = subFiles.length;
                     }
-                    else buf = 0;
-                    String num_item = String.valueOf(buf);
-                    if(buf == 0) num_item = num_item + getString(R.string._item);
+                    else subFilesCount = 0;
+                    String num_item = String.valueOf(subFilesCount);
+                    if(subFilesCount == 0) num_item = num_item + getString(R.string._item);
                     else num_item = num_item + getString(R.string._items);
-
-
-                    dir.add(new FileItem(ff.getName(),num_item,date_modify,ff.getAbsolutePath(),"directory_icon"));
+                    directories.add(new FileItem(file.getName(),num_item,date_modify,file.getAbsolutePath(),"directory_icon"));
                 }
                 else
                 {
-                    fls.add(new FileItem(ff.getName(),getFileSize(ff.length()), date_modify, ff.getAbsolutePath(),"file_icon"));
+                    files.add(new FileItem(file.getName(),getFileSize(file.length()), date_modify, file.getAbsolutePath(),"file_icon"));
                 }
             }
         }catch(Exception e)
         {
 
         }
-        Collections.sort(dir);
-        Collections.sort(fls);
-        dir.addAll(fls);
-//		 if(!f.getName().equalsIgnoreCase("sdcard"))
-//			 dir.add(0,new Item("..","Parent Directory","",f.getParent(),"directory_up"));
-        if(!f.getName().equalsIgnoreCase(sdCardDir))
-            dir.add(0,new FileItem("..","Parent Directory","",f.getParent(),"directory_up"));
-        adapter = new FileArrayAdapter(FileChooserActivity.this,R.layout.file_item,dir);
-        this.setListAdapter(adapter);
+        Collections.sort(directories);
+        Collections.sort(files);
+        directories.addAll(files);
+        if(!parentDir.getName().equalsIgnoreCase(sdCardDir))
+            directories.add(0,new FileItem("..","Parent Directory","",parentDir.getParent(),"directory_up"));
+        adapter = new FileRecViewAdapter(FileChooserActivity.this,directories);
+        this.setRecViewAdapter(adapter);
     }
+
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        // TODO Auto-generated method stub
-        super.onListItemClick(l, v, position, id);
-        FileItem o = adapter.getItem(position);
-        if(o.getImage().equalsIgnoreCase("directory_icon")||o.getImage().equalsIgnoreCase("directory_up")){
-            currentDir = new File(o.getPath());
+    public void onFileItemClick(FileItem item) {
+        if(item.getImage().equalsIgnoreCase("directory_icon")||item.getImage().equalsIgnoreCase("directory_up")){
+            currentDir = new File(item.getPath());
             fill(currentDir);
         }
         else
         {
-            onFileClick(o);
+            onFileClick(item);
         }
     }
 
     private void onFileClick(FileItem o)
     {
         Intent intent = new Intent();
-        /*intent.putExtra(DIR_PATH,currentDir.toString());
-        intent.putExtra(FILE_FULL_PATH,o.getPath());
-        intent.putExtra(FILE_NAME,o.getName());*/
         intent.putExtra(FILE_INFO,new FileInfo(o.getName(),o.getPath(),currentDir.toString()));
         setResult(RESULT_OK, intent);
         finish();
     }
 
 
-    /*public static String getDirPath(Intent data){
-       return getData(data,DIR_PATH);
-    }
-    public static String getFileFullPath(Intent data){
-        return getData(data,FILE_FULL_PATH);
-    }
-    public static String getFileName(Intent data){
-        return getData(data,FILE_NAME);
-    }*/
 
     public static FileInfo getFileInfo(Intent data){
         if(data!=null){
