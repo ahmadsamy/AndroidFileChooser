@@ -69,6 +69,7 @@ public class AppCompatRecViewActivity extends AppCompatActivity
     public RecyclerView.Adapter<?> getRecViewAdapter() {
         return mAdapter;
     }
+
     private void ensureList() {
         if (mRecView != null) {
             return;

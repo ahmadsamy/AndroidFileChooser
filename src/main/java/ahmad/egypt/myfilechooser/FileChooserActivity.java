@@ -27,7 +27,6 @@ import ahmad.egypt.myfilechooser.model.FileItem;
 public class FileChooserActivity extends AppCompatRecViewActivity implements FileRecViewAdapter.FileItemClickCallBack{
 
     private File currentDir;
-    private FileRecViewAdapter adapter;
     private String sdCardDir;
     private int REQUEST_CODE=0x000001;
 
@@ -113,7 +112,7 @@ public class FileChooserActivity extends AppCompatRecViewActivity implements Fil
         directories.addAll(files);
         if(!parentDir.getName().equalsIgnoreCase(sdCardDir))
             directories.add(0,new FileItem("..","Parent Directory","",parentDir.getParent(),"directory_up"));
-        adapter = new FileRecViewAdapter(FileChooserActivity.this,directories);
+        FileRecViewAdapter adapter = new FileRecViewAdapter(FileChooserActivity.this, directories);
         this.setRecViewAdapter(adapter);
     }
 
