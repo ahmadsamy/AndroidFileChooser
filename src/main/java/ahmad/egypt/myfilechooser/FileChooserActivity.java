@@ -27,7 +27,7 @@ import ahmad.egypt.myfilechooser.model.FileItem;
 public class FileChooserActivity extends AppCompatRecViewActivity implements FileRecViewAdapter.FileItemClickCallBack{
 
     private File currentDir;
-    private String sdCardDir;
+    private String externalStorageRoot;
     private int REQUEST_CODE=0x000001;
 
     private static String FILE_INFO="FILE_INFO";
@@ -42,7 +42,7 @@ public class FileChooserActivity extends AppCompatRecViewActivity implements Fil
 
     private void initUI(){
         currentDir = Environment.getExternalStorageDirectory();
-        sdCardDir=currentDir.getName();
+        externalStorageRoot=currentDir.getAbsolutePath();
         fill(currentDir);
     }
 
@@ -110,7 +110,7 @@ public class FileChooserActivity extends AppCompatRecViewActivity implements Fil
         Collections.sort(directories);
         Collections.sort(files);
         directories.addAll(files);
-        if(!parentDir.getName().equalsIgnoreCase(sdCardDir))
+        if(!isExternalStorageRoot(parentDir.getAbsolutePath())/*parentDir.getName().equalsIgnoreCase(sdCardDir)*/)
             directories.add(0,new FileItem("..","Parent Directory","",parentDir.getParent(),"directory_up"));
         FileRecViewAdapter adapter = new FileRecViewAdapter(FileChooserActivity.this, directories);
         this.setRecViewAdapter(adapter);
@@ -168,6 +168,10 @@ public class FileChooserActivity extends AppCompatRecViewActivity implements Fil
         DecimalFormat df = new DecimalFormat("##.###");
         df.setRoundingMode(RoundingMode.UP);
         return df.format(f);
+    }
+
+    private boolean isExternalStorageRoot(String path){
+        return path.equalsIgnoreCase(externalStorageRoot);
     }
 
 }

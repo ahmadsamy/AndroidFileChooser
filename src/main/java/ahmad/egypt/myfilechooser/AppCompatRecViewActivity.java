@@ -1,9 +1,8 @@
 package ahmad.egypt.myfilechooser;
 
 
-import android.widget.*;
+
 import android.os.*;
-import android.view.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
