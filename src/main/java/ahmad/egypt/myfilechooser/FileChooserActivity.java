@@ -114,6 +114,7 @@ public class FileChooserActivity extends AppCompatRecViewActivity implements Fil
             directories.add(0,new FileItem("..","Parent Directory","",parentDir.getParent(),"directory_up"));
         FileRecViewAdapter adapter = new FileRecViewAdapter(FileChooserActivity.this, directories);
         this.setRecViewAdapter(adapter);
+        mRecView.scheduleLayoutAnimation();
     }
 
     @Override
@@ -174,5 +175,13 @@ public class FileChooserActivity extends AppCompatRecViewActivity implements Fil
         return path.equalsIgnoreCase(externalStorageRoot);
     }
 
+    @Override
+    public void onBackPressed() {
+        if(!isExternalStorageRoot(currentDir.getAbsolutePath())){
+            currentDir=currentDir.getParentFile();
+            fill(currentDir);
+        }
+       else super.onBackPressed();
+    }
 }
 
