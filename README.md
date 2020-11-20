@@ -55,3 +55,6 @@ Java:
 
     }
 ```
+
+
+#Not yet compatible with android 11, but it will be soon..
